@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kubetest-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kubetest
+    spec:
+      containers:
+      - name: kubetest
+        image: jasondewitt/kubetest
+        ports:
+        - name: kubetest-port
+          containerPort: 8000

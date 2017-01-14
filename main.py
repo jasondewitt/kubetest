@@ -1,31 +1,31 @@
-import operator
-import pykube
+from kubernetes import client, config
 from flask import Flask, render_template
 import os.path
-
-
+from pprint import pprint
 
 app = Flask(__name__)
 
 @app.route('/')
 def showpods():
-    pods = pykube.Pod.objects(kubeapi)
-    podnames = []
+    pods = kubeapi.list_namespaced_pod("default")
+#    podnames = []
 
-    for pod in pods.response['items']:
-        podnames.append(pod['metadata']['name'])
+#    for pod in pods.response['items']:
+#        podnames.append(pod['metadata']['name'])
 
-    return render_template('pods.html', podnames=podnames)
+    return render_template('pods.html', pods=pods)
 
+@app.route('/pod/<podname>')
+def describepod(podname):
+    podresponse = kubeapi.read_namespaced_pod(podname, "default", pretty=True, exact=True, export=True)
+    return render_template('pod.html', pod=podresponse)
 
 
 if __name__ == "__main__":
 
-    if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount'):
-        kubeapi = pykube.HTTPClient(pykube.KubeConfig.from_service_account())
-    else:
-        kubeapi = pykube.HTTPClient(pykube.KubeConfig.from_file('~/.kube/config'))
-    pods = pykube.Pod.objects(kubeapi)
+    config.load_incluster_config()
 
+#pods = pykube.Pod.objects(kubeapi)
 
+    kubeapi = client.CoreV1Api()
     app.run(host='0.0.0.0', port=8000)

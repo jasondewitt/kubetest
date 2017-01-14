@@ -3,10 +3,11 @@
 
 </head>
 <body>
-<ul>
-    {% for name in podnames %}
-        <li>{{ name }}</li>
+<table>
+    <tr><td>Pod</td><td>Status</td><td>Pod IP</td></tr>
+    {% for pod in pods.items %}
+        <tr><td><a href="pod/{{pod.metadata.name}}">{{ pod.metadata.name }}</a></td><td>{{ pod.status.phase }}</td><td>{{ pod.status.pod_ip }}</td>
     {% endfor %}
-</ul>
+</table>
 </body>
 </html>
